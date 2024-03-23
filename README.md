@@ -6,7 +6,7 @@
 Make sure you are in the root of your project.
 
 ```
-module load eth_proxy gcc/8.2.0 python_gpu/3.9.9
+module load eth_proxy gcc/8.2.0 python_gpu/3.10.4
 python -m venv --system-site-packages venv
 source ./venv/bin/activate
 

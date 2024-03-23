@@ -1,7 +1,7 @@
 #!/bin/bash
 
 module purge
-module load eth_proxy gcc/8.2.0 python_gpu/3.9.9
+module load eth_proxy gcc/8.2.0 python_gpu/3.10.4
 source /cluster/work/cotterell/iconstantine/lm-critical-period/venv/bin/activate
 
 
