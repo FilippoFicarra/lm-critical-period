@@ -55,8 +55,7 @@ esac
 if [ ! -z "${TOKENIZER}" ]
 then
   echo "Using custom tokenizer ${TOKENIZER}"
-  extra_flags="${extra_flags} --tokenizer_name data/${DATASET}/${TOKENIZER}"
-
+  extra_flags="${extra_flags} --tokenizer_name ${DATA_DIR}/${TOKENIZER}"
 elif [ -d "${DATA_DIR}/${MODEL}_tokenizer" ];
 then
   echo "Default tokenizer is already trained."

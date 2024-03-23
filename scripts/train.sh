@@ -129,7 +129,6 @@ then
             scripts/train.euler
   done
 
-
 else
   echo 'Doing normal training'
   MODEL=${model} CHECKPOINT=${checkpoint} RESUME=${resume} DATASET=${dataset} TOKENIZER=${tokenizer} LANG1=${lang1} LANG2=${lang2} MODE=${training_mode} \
