@@ -672,6 +672,7 @@ def main():
             preds = preds[:, :-1].reshape(-1)
             return metric.compute(predictions=preds, references=labels)
 
+
     # Initialize our Trainer
     trainer = Trainer(
         model=model,
@@ -687,11 +688,24 @@ def main():
         else None,
     )
 
+    print(f'model_args: {model_args}')
     if model_args.early_stopping:
         trainer.add_callback(EarlyStoppingCallback(early_stopping_patience=2))
 
-    # import ipdb; ipdb.set_trace()
+    total_train_examples = len(train_dataset)
+    print("Total train examples:", total_train_examples)
+    batch_size = training_args.per_device_train_batch_size  # Assuming this is how you set batch size
+    gradient_accumulation_steps = training_args.gradient_accumulation_steps
 
+    # Calculate effective batch size considering gradient accumulation
+    effective_batch_size = batch_size * gradient_accumulation_steps
+
+    # Calculate steps per epoch
+    steps_per_epoch = total_train_examples // effective_batch_size
+
+    print("Steps per epoch:", steps_per_epoch)
+
+    # import ipdb; ipdb.set_trace()
     # Training
     if training_args.do_train:
         checkpoint = None

@@ -26,7 +26,7 @@ ${RUN_APPLICATION} ./src/learn/run_clm.py \
     --logging_steps 50 \
     --do_eval \
     --evaluation_strategy "epoch" \
-    --save_strategy "epoch" \
+    --save_strategy "steps" \
     --low_cpu_mem_usage \
     --fp16 \
     --ddp_backend nccl \

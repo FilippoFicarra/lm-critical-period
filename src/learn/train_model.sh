@@ -120,7 +120,8 @@ else
 
   export MODEL_NAME=${MODEL_NAME}
   export DATA_DIR=${DATA_DIR}
-
+  
+  echo "Training model ${MODEL_NAME} with flags: ${extra_flags}"
   bash ./src/learn/${application} ${extra_flags}
 
 fi
