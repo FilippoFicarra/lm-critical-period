@@ -2,7 +2,7 @@
 
 model="gpt2"
 lang1="en"
-dataset="unified_clean"
+dataset="babylm"
 training_mode="sequential"
 seed=0
 project_name="critical-period"

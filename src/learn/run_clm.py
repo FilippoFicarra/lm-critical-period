@@ -46,7 +46,9 @@ from transformers import (
     AutoTokenizer,
     GPT2LMHeadModel,
     HfArgumentParser,
+    IntervalStrategy,
     Trainer,
+    TrainerCallback,
     TrainingArguments,
     EarlyStoppingCallback,
     default_data_collator,
@@ -332,6 +334,38 @@ def estimate_fisher_information_matrix(trainer, model, dataset, n_samples=10):
     fisher_information_matrix = [(x / n_samples).detach().to('cpu').numpy() for x in fisher_unnormed]
     return fisher_information_matrix
 
+
+def decay_function(start: int, end: int, n_steps: int):
+    decay = (end / start) ** (1 / (n_steps - 1))
+    for i in range(n_steps):
+        yield int(start * decay ** i)
+
+class SaveStepsCallback(TrainerCallback):
+    def __init__(self, save_steps_list):
+        self.save_steps_list = save_steps_list
+
+    def on_step_end(self, args, state, control, **kwargs):
+        # Log
+        if state.global_step == 1 and args.logging_first_step:
+            control.should_log = True
+        if args.logging_strategy == IntervalStrategy.STEPS and state.global_step % args.logging_steps == 0:
+            control.should_log = True
+
+        # Evaluate
+        if (
+            args.evaluation_strategy == IntervalStrategy.STEPS
+            and state.global_step % args.eval_steps == 0
+            and args.eval_delay <= state.global_step
+        ):
+            control.should_evaluate = True
+        # Save
+        if (
+            args.save_strategy == IntervalStrategy.STEPS
+            and state.global_step in self.save_steps_list
+        ): 
+            control.should_save = True
+        else:
+            control.should_save = False
 
 def main():
     # See all possible arguments in src/transformers/training_args.py
@@ -671,8 +705,9 @@ def main():
             labels = labels[:, 1:].reshape(-1)
             preds = preds[:, :-1].reshape(-1)
             return metric.compute(predictions=preds, references=labels)
-
-
+        
+    
+   
     # Initialize our Trainer
     trainer = Trainer(
         model=model,
@@ -687,23 +722,22 @@ def main():
         if training_args.do_eval and not is_torch_tpu_available()
         else None,
     )
-
-    print(f'model_args: {model_args}')
+   
     if model_args.early_stopping:
         trainer.add_callback(EarlyStoppingCallback(early_stopping_patience=2))
+        
+    num_gpus = int(os.getenv('NUM_GPUS'))
+    effective_batch_size = training_args.per_device_train_batch_size * training_args.gradient_accumulation_steps * num_gpus
+    
+    print(f'effective_batch_size: {effective_batch_size}')
+    print(f'len(train_dataset): {len(train_dataset)}')
 
-    total_train_examples = len(train_dataset)
-    print("Total train examples:", total_train_examples)
-    batch_size = training_args.per_device_train_batch_size  # Assuming this is how you set batch size
-    gradient_accumulation_steps = training_args.gradient_accumulation_steps
+    final_step = (len(train_dataset) // effective_batch_size) * training_args.num_train_epochs
+    steps_to_save = [i for i in range(5, 100, 5)] + [step for step in decay_function(100, final_step, 100)]
+    
+    print(f'steps_to_save: {steps_to_save}, len: {len(steps_to_save)}')
+    trainer.add_callback(SaveStepsCallback(save_steps_list=steps_to_save))
 
-    # Calculate effective batch size considering gradient accumulation
-    effective_batch_size = batch_size * gradient_accumulation_steps
-
-    # Calculate steps per epoch
-    steps_per_epoch = total_train_examples // effective_batch_size
-
-    print("Steps per epoch:", steps_per_epoch)
 
     # import ipdb; ipdb.set_trace()
     # Training

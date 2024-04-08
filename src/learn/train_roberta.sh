@@ -17,8 +17,8 @@ ${RUN_APPLICATION} ./src/learn/run_mlm.py \
     --report_to wandb \
     --output_dir "./checkpoints/${MODEL_NAME}" \
     --overwrite_output_dir \
-    --per_device_train_batch_size 8 \
-    --per_device_eval_batch_size 8 \
+    --per_device_train_batch_size 4 \
+    --per_device_eval_batch_size 4 \
     --gradient_accumulation_steps 64 \
     --eval_accumulation_steps 64 \
     --max_seq_length 510 \
@@ -26,7 +26,7 @@ ${RUN_APPLICATION} ./src/learn/run_mlm.py \
     --logging_steps 50 \
     --do_eval \
     --evaluation_strategy "epoch" \
-    --save_strategy "epoch" \
+    --save_strategy "steps" \
     --low_cpu_mem_usage \
     --fp16 \
     --ddp_timeout 7200 \
