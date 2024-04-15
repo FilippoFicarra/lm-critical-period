@@ -17,8 +17,8 @@ ${RUN_APPLICATION} ./src/learn/run_clm.py \
     --report_to wandb \
     --output_dir "./checkpoints/${MODEL_NAME}" \
     --overwrite_output_dir \
-    --per_device_train_batch_size 4 \
-    --per_device_eval_batch_size 4 \
+    --per_device_train_batch_size 8 \
+    --per_device_eval_batch_size 8 \
     --gradient_accumulation_steps 128 \
     --eval_accumulation_steps 128 \
     --block_size 512 \
