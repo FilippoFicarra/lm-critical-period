@@ -81,7 +81,7 @@ torch==2.0.1
 torchaudio==2.0.2
 torchvision==0.15.2
 tqdm==4.65.0
-transformers @ git+https://github.com/huggingface/transformers@5f26a23d0359ef983734655f6e1545380268e256
+# transformers @ git+https://github.com/huggingface/transformers@5f26a23d0359ef983734655f6e1545380268e256
 typer==0.7.0
 typing_extensions==4.5.0
 tzdata==2023.3

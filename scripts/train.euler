@@ -16,9 +16,12 @@ export NUM_GPUS=8
 workdir="$SLURM_SUBMIT_DIR"  # The value of SLURM_SUBMIT_DIR sets workdir to the directory
                              # in which sbatch is run.
 
+venvdir="$SCRATCH"
 module purge
-module load eth_proxy gcc/8.2.0 python_gpu/3.10.4
-source $workdir/venv/bin/activate
+# module load eth_proxy gcc/8.2.0 python_gpu/3.10.4
+module load eth_proxy stack/2024-05 gcc/13.2.0 python/3.10.13_cuda
+source $venvdir/venv/bin/activate
+# source ~/venv/bin/activate
 
 
 #! Run options for the application:

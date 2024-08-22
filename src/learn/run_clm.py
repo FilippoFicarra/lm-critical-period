@@ -724,7 +724,7 @@ def main():
     )
    
     if model_args.early_stopping:
-        trainer.add_callback(EarlyStoppingCallback(early_stopping_patience=2))
+        trainer.add_callback(EarlyStoppingCallback(early_stopping_patience=5))
         
     num_gpus = int(os.getenv('NUM_GPUS'))
     effective_batch_size = training_args.per_device_train_batch_size * training_args.gradient_accumulation_steps * num_gpus
@@ -732,8 +732,24 @@ def main():
     print(f'effective_batch_size: {effective_batch_size}')
     print(f'len(train_dataset): {len(train_dataset)}')
 
-    final_step = (len(train_dataset) // effective_batch_size) * training_args.num_train_epochs
-    steps_to_save = [i for i in range(5, 100, 5)] + [step for step in decay_function(100, final_step, 100)]
+    final_step = int((len(train_dataset) // effective_batch_size) * training_args.num_train_epochs)
+    print(f'final_step: {final_step}')
+    #steps_to_save = [i for i in range(5, 100, 5)] + [step for step in decay_function(100, final_step, 100)]
+    steps_to_save = []
+    for i in range(final_step):
+        if i < 1000:
+            if i % 50 == 0:
+                steps_to_save.append(i)
+        elif i < 10000:
+            if i % 200 == 0:
+                steps_to_save.append(i)
+        elif i < 100000:
+            if i % 500 == 0:
+                steps_to_save.append(i)
+        else:
+            if i % 5000 == 0:
+                steps_to_save.append(i)
+    steps_to_save.append(final_step)
     
     print(f'steps_to_save: {steps_to_save}, len: {len(steps_to_save)}')
     trainer.add_callback(SaveStepsCallback(save_steps_list=steps_to_save))
