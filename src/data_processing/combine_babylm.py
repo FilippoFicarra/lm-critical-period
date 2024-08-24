@@ -28,13 +28,8 @@ def main():
         with open(os.path.join(input_dir, "train_100M", file), "r") as f:
             train_data += f.read()
             train_data += "\n"
-            
-    # shuffle the data
-    train_data = train_data.split("\n")
-    random.shuffle(train_data)
-    train_data = "\n".join(train_data)
     
-    
+
     with open(os.path.join(input_dir, "en/raw/train.txt"), "w") as f:
         f.write(train_data)
         
