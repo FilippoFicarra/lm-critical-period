@@ -1,1 +1,1 @@
---num_train_epochs 50 --learning_rate 1e-3 --warmup_ratio 0.07 --gradient_accumulation_steps 16
+--num_train_epochs 50 --learning_rate 1e-3 --warmup_ratio 0.07 --gradient_accumulation_steps 16 --early_stopping --save_strategy epoch --load_best_model_at_end

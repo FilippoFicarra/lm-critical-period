@@ -706,7 +706,9 @@ def main():
             preds = preds[:, :-1].reshape(-1)
             return metric.compute(predictions=preds, references=labels)
         
-    
+    # max samoles based on the dataset size of babylm
+    max_samples = 306878 * 50 
+    training_args.num_train_epochs = math.ceil(max_samples / len(train_dataset))
    
     # Initialize our Trainer
     trainer = Trainer(
