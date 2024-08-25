@@ -360,8 +360,7 @@ class SaveStepsCallback(TrainerCallback):
             control.should_evaluate = True
         # Save
         if (
-            args.save_strategy == IntervalStrategy.STEPS
-            and state.global_step in self.save_steps_list
+            state.global_step in self.save_steps_list
         ): 
             control.should_save = True
         else:
