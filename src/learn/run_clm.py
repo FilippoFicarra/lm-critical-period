@@ -726,7 +726,7 @@ def main():
     )
    
     if model_args.early_stopping:
-        trainer.add_callback(EarlyStoppingCallback(early_stopping_patience=5))
+        trainer.add_callback(EarlyStoppingCallback(early_stopping_patience=7))
         
     num_gpus = int(os.getenv('NUM_GPUS'))
     effective_batch_size = training_args.per_device_train_batch_size * training_args.gradient_accumulation_steps * num_gpus
