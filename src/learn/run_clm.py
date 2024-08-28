@@ -365,6 +365,13 @@ class SaveStepsCallback(TrainerCallback):
             control.should_save = True
         else:
             control.should_save = False
+            
+    def on_epoch_end(self, args, state, control, **kwargs):
+        
+        if len(self.save_steps_list) > 0:
+            control.should_save = False
+
+            
 
 def main():
     # See all possible arguments in src/transformers/training_args.py
@@ -708,6 +715,8 @@ def main():
     # max samoles based on the dataset size of babylm
     max_samples = 306878 * 50 
     training_args.num_train_epochs = math.ceil(max_samples / len(train_dataset))
+    
+    print(f'num_train_epochs: {training_args.num_train_epochs}')
    
     # Initialize our Trainer
     trainer = Trainer(
@@ -724,8 +733,6 @@ def main():
         else None,
     )
    
-    if model_args.early_stopping:
-        trainer.add_callback(EarlyStoppingCallback(early_stopping_patience=7))
         
     num_gpus = int(os.getenv('NUM_GPUS'))
     effective_batch_size = training_args.per_device_train_batch_size * training_args.gradient_accumulation_steps * num_gpus
@@ -754,6 +761,10 @@ def main():
     
     print(f'steps_to_save: {steps_to_save}, len: {len(steps_to_save)}')
     trainer.add_callback(SaveStepsCallback(save_steps_list=steps_to_save))
+    
+    if model_args.early_stopping:
+        print('Using early stopping')
+        trainer.add_callback(EarlyStoppingCallback(early_stopping_patience=10, early_stopping_threshold=0.01))
 
     # import ipdb; ipdb.set_trace()
     # Training
