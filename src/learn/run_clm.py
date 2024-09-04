@@ -36,6 +36,7 @@ import evaluate
 import torch
 from torch.functional import F
 from datasets import load_dataset
+from multiprocessing import cpu_count
 
 import transformers
 from transformers import (
@@ -717,6 +718,8 @@ def main():
     training_args.num_train_epochs = math.ceil(max_samples / len(train_dataset))
     
     print(f'num_train_epochs: {training_args.num_train_epochs}')
+    
+    training_args.dataloader_num_workers = min(cpu_count(), 32)
    
     # Initialize our Trainer
     trainer = Trainer(
